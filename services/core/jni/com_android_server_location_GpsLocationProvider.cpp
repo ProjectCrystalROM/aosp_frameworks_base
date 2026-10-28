@@ -30,6 +30,7 @@
 
 #include <arpa/inet.h>
 #include <string.h>
+#include <stddef.h>
 #include <pthread.h>
 #include <linux/in.h>
 #include <linux/in6.h>
@@ -171,10 +172,28 @@ static void xtra_download_request_callback()
     checkAndClearExceptionFromCallback(env, __FUNCTION__);
 }
 
+#ifdef K7_GPS_XTRA_THREE_CALLBACKS
+// LG reads an optional third callback beyond the standard two-pointer object.
+// Keep the prefix unchanged and the extra pointer explicitly NULL for life.
+struct K7GpsXtraCallbacks {
+    GpsXtraCallbacks standard;
+    void (*report_xtra_server_cb)(const char*, const char*, const char*);
+};
+typedef char K7GpsXtraCallbackLayout[
+    sizeof(GpsXtraCallbacks) == 2 * sizeof(void*) &&
+    offsetof(K7GpsXtraCallbacks, report_xtra_server_cb) == sizeof(GpsXtraCallbacks)
+    ? 1 : -1];
+static K7GpsXtraCallbacks sK7GpsXtraCallbacks = {
+    { xtra_download_request_callback, create_thread_callback },
+    NULL,
+};
+#define sGpsXtraCallbacks sK7GpsXtraCallbacks.standard
+#else
 GpsXtraCallbacks sGpsXtraCallbacks = {
     xtra_download_request_callback,
     create_thread_callback,
 };
+#endif
 
 static jbyteArray convert_to_ipv4(uint32_t ip, bool net_order)
 {

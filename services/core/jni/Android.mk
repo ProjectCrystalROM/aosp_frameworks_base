@@ -63,3 +63,7 @@ LOCAL_SHARED_LIBRARIES += \
     libGLESv2 \
     libnetutils \
 
+
+ifeq ($(BOARD_GPS_XTRA_THREE_CALLBACKS),true)
+LOCAL_CFLAGS += -DK7_GPS_XTRA_THREE_CALLBACKS
+endif
