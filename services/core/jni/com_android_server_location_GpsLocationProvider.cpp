@@ -767,12 +767,16 @@ static void android_location_GpsLocationProvider_agps_data_conn_open(
     const char *apnStr = env->GetStringUTFChars(apn, NULL);
 
     size_t interface_size = sAGpsInterface->size;
-    if (interface_size == sizeof(AGpsInterface_v2)) {
+    if (interface_size >= sizeof(AGpsInterface_v2) &&
+            sAGpsInterface->data_conn_open_with_apn_ip_type != NULL) {
         sAGpsInterface->data_conn_open_with_apn_ip_type(apnStr, apnIpType);
-    } else if (interface_size == sizeof(AGpsInterface_v1)) {
+    } else if (interface_size >= sizeof(AGpsInterface_v1) &&
+            sAGpsInterface->data_conn_open != NULL) {
+        // Some legacy HALs report v2 size but only implement the v1 open hook.
         sAGpsInterface->data_conn_open(apnStr);
     } else {
-        ALOGE("Invalid size of AGpsInterface found: %d.", interface_size);
+        ALOGE("No usable data connection open callback in AGpsInterface (size %zu).",
+                interface_size);
     }
 
     env->ReleaseStringUTFChars(apn, apnStr);
