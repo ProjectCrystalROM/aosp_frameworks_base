@@ -86,6 +86,7 @@ package android {
     field public static final java.lang.String DUMP = "android.permission.DUMP";
     field public static final java.lang.String EXPAND_STATUS_BAR = "android.permission.EXPAND_STATUS_BAR";
     field public static final java.lang.String FACTORY_TEST = "android.permission.FACTORY_TEST";
+    field public static final java.lang.String FAKE_PACKAGE_SIGNATURE = "android.permission.FAKE_PACKAGE_SIGNATURE";
     field public static final java.lang.String FLASHLIGHT = "android.permission.FLASHLIGHT";
     field public static final java.lang.String FORCE_BACK = "android.permission.FORCE_BACK";
     field public static final java.lang.String FORCE_STOP_PACKAGES = "android.permission.FORCE_STOP_PACKAGES";
